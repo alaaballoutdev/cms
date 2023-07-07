@@ -22,24 +22,23 @@ export type PageType = {
 
 const PagesTable = ({ pages }: { pages: PageType[] }) => {
   const router = useRouter();
+  const tableStyle = {
+    width: "75%",
+    margin: "auto",
+    mt: 3,
+    mb: 7,
+    height: 400,
+  };
   return (
     <>
-      <TableContainer
-        component={Paper}
-        sx={{
-          width: "75%",
-          margin: "auto",
-          mt: 3,
-          mb: 7,
-          height: 400,
-        }}
-      >
+      <TableContainer component={Paper} sx={tableStyle}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
               <HeadCell>Page name</HeadCell>
               <HeadCell>URL</HeadCell>
               <HeadCell>Created</HeadCell>
+              <HeadCell> </HeadCell>
               <HeadCell> </HeadCell>
               <HeadCell>
                 <Button
@@ -67,10 +66,21 @@ const PagesTable = ({ pages }: { pages: PageType[] }) => {
                     variant="outlined"
                     endIcon={<Visibility />}
                     onClick={() => {
-                      router.push(`${page.url}`);
+                      router.push(`page/en/${page.url}`);
                     }}
                   >
-                    Preview
+                    en
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="outlined"
+                    endIcon={<Visibility />}
+                    onClick={() => {
+                      router.push(`page/ar/${page.url}`);
+                    }}
+                  >
+                    ar
                   </Button>
                 </TableCell>
 

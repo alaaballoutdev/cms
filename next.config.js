@@ -13,8 +13,8 @@ const nextConfig = {
         return[
         
             {
-                source:`/test/:lang/:url*`,
-                destination:'/test?lang=:lang&url=:url*',
+                source:`/page/:lang/:url*`,
+                destination:'/page?lang=:lang&url=:url*',
                 
 
             }
