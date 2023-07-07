@@ -1,6 +1,6 @@
 import pocket from "lib/PocketBaseSingleton";
 import { NextResponse } from "next/server";
-import { pocketRequest } from "utils/pocketRequestWrapper";
+import { pocketRequest } from "utils/AuthValidation";
 
 type RequestBody = {
   pagename: string;
