@@ -89,7 +89,7 @@ const PagesTable = ({ pages }: { pages: PageType[] }) => {
                     variant="outlined"
                     endIcon={<Edit />}
                     onClick={() => {
-                      router.push(`/editpage${page.url}`);
+                      router.push(`/editpage?url=${page.url}`);
                     }}
                   >
                     Edit
