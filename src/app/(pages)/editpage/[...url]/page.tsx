@@ -6,11 +6,11 @@ import { revalidatePath } from "next/cache";
 import { notFound } from "next/navigation";
 import { pocketRequest } from "utils/pocketRequestWrapper";
 export const revalidate = 0;
-const page = async ({ params }: { params: { url: string } }) => {
+const page = async ({ params }: { params: { url: string[] } }) => {
   const pocketOperations = async () => {
     const pageRecord = await pocket
       .collection("pages")
-      .getFirstListItem(`url='/${params.url}'`);
+      .getFirstListItem(`url='/${params.url.join("/")}'`);
     return pageRecord;
   };
   const res: Page | -2 | 0 | -1 = await pocketRequest(pocketOperations);

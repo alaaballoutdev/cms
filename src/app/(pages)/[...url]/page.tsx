@@ -6,6 +6,7 @@ const page = async ({ params }: { params: { url: string[] } }) => {
     const pageRecord = await pocket
       .collection("pages")
       .getFirstListItem(`url='/${params.url.join("/")}'`);
+
     if (pageRecord) {
       return <p dangerouslySetInnerHTML={{ __html: pageRecord.content }}></p>;
     }

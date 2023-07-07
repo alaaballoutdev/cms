@@ -24,9 +24,9 @@ const page = async () => {
   }
   const pages = res.map((page) => {
     return {
+      created: page.created,
       pagename: page.pagename,
       url: page.url,
-      created: page.created,
     };
   });
   return (
