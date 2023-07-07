@@ -1,6 +1,6 @@
 import pocket from "lib/PocketBaseSingleton";
 import { NextResponse } from "next/server";
-import { pocketRequest } from "utils/AuthValidation";
+import { validateAuthentication } from "utils/AuthValidation";
 
 type RequestBody = {
   pagename: string;
@@ -9,24 +9,9 @@ type RequestBody = {
   content_ar: string;
 };
 
-const createPage = async (data: RequestBody) => {
-  const res = await pocket.collection("pages").create(data);
-  return 1;
-};
-
 export async function POST(request: Request) {
-  const body: RequestBody = await request.json();
-  const { pagename, content, url, content_ar } = body;
-  const pocketOperations = async () => {
-    return await createPage({ content, url, pagename, content_ar });
-  };
-  const res: 1 | 0 | -1 = await pocketRequest(pocketOperations);
-  if (res === 1) {
-    return NextResponse.json({
-      message: "Successfuly created",
-    });
-  }
-  if (res === 0) {
+  const isValid = await validateAuthentication();
+  if (!isValid) {
     return NextResponse.json(
       {
         message: "Unauthorized",
@@ -34,12 +19,22 @@ export async function POST(request: Request) {
       { status: 401 }
     );
   }
-  if (res === -1) {
+
+  const body: RequestBody = await request.json();
+  const { pagename, content, url, content_ar } = body;
+  const data = { pagename, content, url, content_ar };
+  try {
+    await pocket.collection("pages").create(data);
+  } catch (error) {
     return NextResponse.json(
       {
-        message: "Something went Wrong",
+        message: "Bad Request",
       },
       { status: 400 }
     );
   }
+
+  return NextResponse.json({
+    message: "Successfuly created",
+  });
 }

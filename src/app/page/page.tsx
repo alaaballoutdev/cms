@@ -2,7 +2,26 @@ import SignOut from "components/Globals/SignOut";
 import pocket from "lib/PocketBaseSingleton";
 import { notFound } from "next/navigation";
 import { validateAuthentication } from "utils/AuthValidation";
-export const revalidate = 0;
+export const revalidate = 10;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: { lang: "en" | "ar"; url: string };
+}) {
+  const page = await pocket
+    .collection("pages")
+    .getFirstListItem(`url='/${searchParams?.url}'`, {
+      fields: `url,pagename,${
+        searchParams && searchParams.lang === "en" ? "content" : "content_ar"
+      }, created`,
+    });
+
+  return {
+    title: `${page.pagename} | Post In`,
+  };
+}
+
 const page = async ({
   searchParams,
 }: {

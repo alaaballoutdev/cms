@@ -4,6 +4,9 @@ import pocket from "lib/PocketBaseSingleton";
 import { notFound } from "next/navigation";
 import { validateAuthentication } from "utils/AuthValidation";
 export const revalidate = 0;
+export const metadata = {
+  title: "Edit Page | Post In",
+};
 const page = async ({ searchParams }: { searchParams: { url: string } }) => {
   const isValid = await validateAuthentication(`/editpage${searchParams.url}`);
   if (!isValid) {

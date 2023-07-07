@@ -1,6 +1,6 @@
 import pocket from "lib/PocketBaseSingleton";
 import { NextResponse } from "next/server";
-import { pocketRequest } from "utils/AuthValidation";
+import { validateAuthentication } from "utils/AuthValidation";
 
 type RequestBody = {
   pagename: string;
@@ -10,32 +10,9 @@ type RequestBody = {
   content_ar: string;
 };
 
-const editPage = async (
-  id: string,
-  { content, url, pagename, content_ar }: RequestBody
-) => {
-  const res = await pocket
-    .collection("pages")
-    .update(id, { content, url, pagename, content_ar });
-  if (!res.code) {
-    return 1;
-  }
-  return -1;
-};
-
 export async function POST(request: Request) {
-  const body = await request.json();
-  const { pagename, content, url, id, content_ar } = body;
-  const pocketOperations = async () => {
-    return await editPage(id, { content, url, id, pagename, content_ar });
-  };
-  const res: 1 | 0 | -1 = await pocketRequest(pocketOperations);
-  if (res === 1) {
-    return NextResponse.json({
-      message: "Successfuly updated",
-    });
-  }
-  if (res === 0) {
+  const isValid = await validateAuthentication();
+  if (!isValid) {
     return NextResponse.json(
       {
         message: "Unauthorized",
@@ -43,12 +20,21 @@ export async function POST(request: Request) {
       { status: 401 }
     );
   }
-  if (res === -1) {
+  const body: RequestBody = await request.json();
+  const { pagename, content, url, id, content_ar } = body;
+
+  try {
+    await pocket
+      .collection("pages")
+      .update(id, { content, url, pagename, content_ar });
+  } catch (error) {
     return NextResponse.json(
-      {
-        message: "Something went Wrong",
-      },
+      { message: "Something Went Wrong" },
       { status: 400 }
     );
   }
+
+  return NextResponse.json({
+    message: "Successfuly updated",
+  });
 }
