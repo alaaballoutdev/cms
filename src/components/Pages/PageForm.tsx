@@ -1,70 +1,85 @@
 "use client";
-import { Textarea } from "@mui/joy";
-import { Box, Button } from "@mui/material";
-import CustomInput from "components/Globals/ui/CustomInput";
-import { useForm, SubmitHandler } from "react-hook-form";
-export interface Page {
+import { Button, Typography, Form, Input } from "antd";
+import { useEffect } from "react";
+
+export type PageFormData = {
+  id?: string;
   pagename: string;
   url: string;
-  content: string;
-  id: string;
-  content_ar: string;
-}
-interface PageFormProps {
-  page?: Page;
-  onSubmit: SubmitHandler<Page>;
-}
+  content?: string;
+  content_ar?: string;
+  created?: string;
+};
 
-const PageForm = ({ page, onSubmit }: PageFormProps) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<Page>({
-    defaultValues: page,
-  });
+type Props = {
+  buttonText: string;
+  onFinish: (values: PageFormData) => void;
+  failed: boolean;
+  page?: PageFormData;
+
+  loading: boolean;
+};
+const { Paragraph } = Typography;
+
+const PageForm = ({
+  failed,
+  buttonText,
+  onFinish,
+  page,
+
+  loading,
+}: Props) => {
+  const [form] = Form.useForm();
+  useEffect(() => {
+    if (page) {
+      form.setFieldsValue(page);
+    }
+  }, []);
 
   return (
     <>
-      <Box
-        component="form"
-        autoComplete="off"
-        sx={{
-          width: "60%",
-          m: "auto",
-          mt: 15,
-        }}
-        onSubmit={handleSubmit(onSubmit)}
+      <Paragraph style={{ color: "red", textAlign: "center", height: 30 }}>
+        {failed ? "Something went wrong! Try another url." : ""}
+      </Paragraph>
+      <Form
+        layout="vertical"
+        form={form}
+        name="control-ref"
+        onFinish={onFinish}
+        style={{}}
       >
-        <CustomInput
-          placeholder="Page Name"
-          refs={register("pagename", { required: true })}
-          error={!!errors.pagename}
-        />
-
-        <CustomInput
-          placeholder="URL"
-          refs={register("url", { required: true })}
-          error={!!errors.url}
-        />
-        <Textarea
-          sx={{ width: "60%", margin: "auto", minHeight: 300 }}
-          placeholder="Create your content"
-          {...register("content", { required: true })}
-          error={!!errors.content}
-        />
-        <Textarea
-          sx={{ width: "60%", margin: "auto", minHeight: 300 }}
-          placeholder="Create your content"
-          {...register("content_ar", { required: true })}
-          error={!!errors.content_ar}
-        />
-        <div style={{ width: "30%", margin: "20px auto 50px" }}>
-          <Button fullWidth type="submit" variant="outlined">
-            Save
+        <Form.Item
+          name="pagename"
+          label="Page Name"
+          rules={[{ required: true }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item name="url" label="url" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="content" label="Content" rules={[{ required: true }]}>
+          <Input.TextArea style={{ minHeight: 150 }} />
+        </Form.Item>
+        <Form.Item
+          name="content_ar"
+          label="Content AR"
+          rules={[{ required: true }]}
+        >
+          <Input.TextArea style={{ minHeight: 150 }} />
+        </Form.Item>
+        <Form.Item style={{ margin: "auto", width: "50%" }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="login-form-button"
+            block
+            loading={loading}
+          >
+            {buttonText}
           </Button>
-        </div>
-      </Box>
+        </Form.Item>
+      </Form>
     </>
   );
 };

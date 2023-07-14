@@ -19,6 +19,7 @@ export const authOptions: NextAuthOptions = {
           placeholder: "•••••••••••",
         },
       },
+
       async authorize(credentials, req) {
         try {
           const authData = await pocket.admins.authWithPassword(
@@ -33,4 +34,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  pages: {
+    signIn: "/auth/signin",
+  },
 };

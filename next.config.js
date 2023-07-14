@@ -6,15 +6,23 @@ const nextConfig = {
         },
         '@mui/icons-material':{
             transform:'@mui/icons-material/{{member}}'
+        },
+        'antd':{
+            transform:'antd/es/{{kebabCase member}}'
         }
+        , 
+        '@ant-design/icons':{
+            transform:'@ant-design/icons/{{member}}'
+        }
+
 
     },
     async rewrites(){
         return[
         
             {
-                source:`/page/:lang/:url*`,
-                destination:'/page?lang=:lang&url=:url*',
+                source:`/:lang(en|ar)/:url*`,
+                destination:'/:lang?url=:url*',
                 
 
             }
