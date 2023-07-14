@@ -23,8 +23,8 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials, req) {
         try {
           const authData = await pocket.admins.authWithPassword(
-            credentials?.username || "",
-            credentials?.password || ""
+            credentials?.username ?? "",
+            credentials?.password ?? ""
           );
 
           return { ...authData.admin, token: authData.token };

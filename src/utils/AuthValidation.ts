@@ -11,7 +11,7 @@ export async function validateAuthentication(url?: string) {
         return revalidatePath(url);
       } else return false;
     }
-  } catch (error: any) {
+  } catch (error) {
     return false;
   }
 }
