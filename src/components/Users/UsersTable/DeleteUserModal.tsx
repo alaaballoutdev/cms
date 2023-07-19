@@ -1,16 +1,14 @@
-import { ModalProps } from "antd";
-import dynamic from "next/dynamic";
+import { ModalProps, Modal } from "antd";
 import { Dispatch, SetStateAction } from "react";
-import { UserEntryType } from "./UsersTable";
-const Modal = dynamic(() => import("antd/es/modal/Modal"));
+import { UserEntry } from "./UsersTable";
 
 interface DeleteModalProps extends ModalProps {
   setOpenModal: Dispatch<SetStateAction<boolean>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   selectedUser: string | null;
   setSelectedUser: Dispatch<SetStateAction<string | null>>;
-  setUsers: Dispatch<SetStateAction<UserEntryType[]>>;
-  userItems: UserEntryType[];
+  setUsers: Dispatch<SetStateAction<UserEntry[]>>;
+  userItems: UserEntry[];
   children: React.ReactNode;
 }
 
@@ -29,10 +27,12 @@ const DeleteUserModal = ({
   };
   const handleOK = async () => {
     setLoading(true);
-    const res = await fetch("http://localhost:3000/api/user/delete", {
-      method: "POST",
-      body: JSON.stringify({ id: selectedUser }),
-    });
+    const res = await fetch(
+      `http://localhost:3000/api/user/delete?id=${selectedUser}`,
+      {
+        method: "DELETE",
+      }
+    );
     setLoading(false);
     if (res.status == 200) {
       setOpenModal(false);

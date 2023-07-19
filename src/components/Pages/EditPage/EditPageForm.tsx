@@ -1,22 +1,23 @@
 "use client";
 import { useState } from "react";
-import PageForm, { PageFormData } from "../PageForm";
+import PageForm from "../PageForm";
 import { useRouter } from "next/navigation";
 import { Typography } from "antd";
 import FormCard from "../FormCard";
 import { useRecoilState } from "recoil";
 import { pageItems } from "lib/recoil-atoms";
+import { Page, PageRecord } from "lib/Models/Types";
 
-const EditPageForm = ({ page }: { page: PageFormData }) => {
+const EditPageForm = ({ page }: { page: PageRecord }) => {
   const { Title } = Typography;
   const [failed, setFailed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pages, setPages] = useRecoilState(pageItems);
   const router = useRouter();
-  const onFinish = async (data: PageFormData) => {
+  const onFinish = async (data: Page) => {
     setLoading(true);
     const res = await fetch("http://localhost:3000/api/pages/edit", {
-      method: "POST",
+      method: "PUT",
       body: JSON.stringify({ ...data, id: page.id }),
     });
     setLoading(false);

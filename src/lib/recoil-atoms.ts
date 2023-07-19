@@ -1,8 +1,8 @@
-import { PageEntryType } from "components/Pages/PagesTable/PagesTable";
 import { atom } from "recoil";
+import { PageEntry } from "components/Pages/PagesTable/PagesTable";
 export const pageItems = atom({
   key: "pages",
-  default: [] as PageEntryType[],
+  default: [] as PageEntry[],
 });
 export const loadingPages = atom({
   key: "loadingPages",

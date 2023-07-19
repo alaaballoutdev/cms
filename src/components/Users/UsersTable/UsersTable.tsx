@@ -1,5 +1,5 @@
 "use client";
-import { Button, Space, Table, Typography } from "antd";
+import { Button, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import {
   UserOutlined,
@@ -9,19 +9,14 @@ import {
 } from "@ant-design/icons";
 import { renderEmail } from "./ItemsRenders";
 import { useState } from "react";
+import { User } from "lib/Models/Types";
 import dynamic from "next/dynamic";
-import DeleteUserModal from "./DeleteUserModal";
-const Modal = dynamic(() => import("antd/es/modal/Modal"));
+const DeleteUserModal = dynamic(() => import("./DeleteUserModal"));
+const Paragraph = dynamic(() => import("antd/es/typography/Paragraph"));
 type Props = {
-  users: UserEntryType[];
+  users: UserEntry[];
 };
-
-export interface UserEntryType {
-  key: string;
-  username: string;
-  created: string;
-  email: string;
-}
+export type UserEntry = User & { key: string; created: string };
 
 const UsersTable = ({ users }: Props) => {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
@@ -33,7 +28,7 @@ const UsersTable = ({ users }: Props) => {
     setSelectedUser(id);
   };
 
-  const columns: ColumnsType<UserEntryType> = [
+  const columns: ColumnsType<UserEntry> = [
     {
       title: (
         <>
@@ -68,7 +63,7 @@ const UsersTable = ({ users }: Props) => {
     {
       title: "Actions",
       key: "action",
-      render: (_: any, record: UserEntryType) => (
+      render: (_: any, record: UserEntry) => (
         <Space size="middle">
           <Button type="default" onClick={() => handleClick(record.key)}>
             <DeleteOutlined />
@@ -77,7 +72,6 @@ const UsersTable = ({ users }: Props) => {
       ),
     },
   ];
-
   return (
     <>
       <DeleteUserModal
@@ -91,7 +85,7 @@ const UsersTable = ({ users }: Props) => {
         setUsers={setUsers}
         userItems={userItems}
       >
-        <Typography.Paragraph>Are you sure?</Typography.Paragraph>
+        <Paragraph>Are you sure?</Paragraph>
       </DeleteUserModal>
       <Table
         columns={columns}

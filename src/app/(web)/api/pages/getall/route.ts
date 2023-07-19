@@ -1,28 +1,16 @@
-import { PageFormData } from "components/Pages/PageForm";
-import pocket from "lib/PocketBaseSingleton";
-import { NextResponse } from "next/server";
+import { Database } from "lib/Models/Database";
+import { PageRecord } from "lib/Models/Types";
+import { NextRequest, NextResponse } from "next/server";
+import { BadRequest } from "utils/TypicalApiResponses";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const pocket = Database.getConnection();
   try {
-    const res: PageFormData[] = await pocket.collection("pages").getFullList();
-    const pages = res.map((page) => {
-      return {
-        url: page.url,
-        pagename: page.pagename,
-        created: page.created,
-        id: page.id,
-      };
-    });
-
+    const pages = await pocket.collection("pages").getFullList<PageRecord>();
     return NextResponse.json({
       pages,
     });
   } catch (error) {
-    return NextResponse.json(
-      {
-        message: "Bad Request",
-      },
-      { status: 400 }
-    );
+    return BadRequest();
   }
 }

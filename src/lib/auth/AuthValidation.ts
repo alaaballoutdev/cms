@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
-import pocket from "../lib/PocketBaseSingleton";
-
+import { Database } from "lib/Models/Database";
 export async function validateAuthentication(url?: string) {
+  const pocket = Database.getConnection();
   try {
     await pocket.admins.authRefresh();
     if (pocket.authStore.isValid) {

@@ -1,30 +1,18 @@
-import pocket from "lib/PocketBaseSingleton";
-import { NextResponse } from "next/server";
+import { Database } from "lib/Models/Database";
+import { NextRequest, NextResponse } from "next/server";
+import { Unauthorized } from "utils/TypicalApiResponses";
+import { validateAuthentication } from "lib/auth/AuthValidation";
 
-export async function GET(request: Request) {
-  try {
-    await pocket.admins.authRefresh();
-    if (pocket.authStore.isValid) {
-      return NextResponse.json(
-        {
-          userInfo: pocket.authStore.model,
-        },
-        { status: 200 }
-      );
-    } else {
-      return NextResponse.json(
-        {
-          message: "Unauthorized",
-        },
-        { status: 401 }
-      );
-    }
-  } catch (error) {
-    return NextResponse.json(
-      {
-        message: "Unauthorized",
-      },
-      { status: 401 }
-    );
+export async function GET(request: NextRequest) {
+  const isValid = await validateAuthentication();
+  if (!isValid) {
+    return Unauthorized();
   }
+  const pocket = Database.getConnection();
+  return NextResponse.json(
+    {
+      userInfo: pocket.authStore.model,
+    },
+    { status: 200 }
+  );
 }

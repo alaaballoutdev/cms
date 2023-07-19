@@ -11,13 +11,12 @@ import {
   PaperClipOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { PageEntryType } from "components/Pages/PagesTable/PagesTable";
-import { PageFormData } from "components/Pages/PageForm";
+import { PageRecord, getTableEntry } from "lib/Models/Types";
 
 const MenuBar = () => {
   const pathname = usePathname();
   const [pageMenuItems, setPageMenuItems] = useState<MenuItem[]>([]);
-  const [pageEntries, setPages] = useRecoilState<PageEntryType[]>(pageItems);
+  const [pageEntries, setPages] = useRecoilState(pageItems);
   const setLoadingPages = useSetRecoilState(loadingPages);
   const items = [
     getItem(<Link href="/">Dashboard</Link>, "1", <PieChartOutlined />),
@@ -36,14 +35,9 @@ const MenuBar = () => {
       });
 
       if (res.status === 200) {
-        const data = await res.json();
-        const pages = data.pages.map((page: PageFormData) => {
-          return {
-            key: page.id,
-            url: page.url,
-            pagename: page.pagename,
-            created: page.created,
-          };
+        const data: { pages: PageRecord[] } = await res.json();
+        const pages = data.pages.map((page: PageRecord) => {
+          return getTableEntry<PageRecord>(page);
         });
         setPages(pages);
         setLoadingPages(false);

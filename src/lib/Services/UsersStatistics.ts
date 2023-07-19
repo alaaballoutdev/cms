@@ -1,4 +1,6 @@
-import pocket from "lib/PocketBaseSingleton";
+import { Database } from "lib/Models/Database";
+
+const pocket = Database.getConnection();
 
 export async function getUsers() {
   const users = await pocket
@@ -11,7 +13,7 @@ export async function getUsers() {
 }
 export async function getSignIns() {
   const date = new Date();
-  const signIns = await pocket.logs.getRequestsList(1, 700, {
+  const signIns = await pocket.logs.getRequestsList(1, 900, {
     filter: `url=	'/api/collections/users/auth-with-password' && status=200 &&created>='01-${
       date.getMonth() + 1
     }-2023'`,

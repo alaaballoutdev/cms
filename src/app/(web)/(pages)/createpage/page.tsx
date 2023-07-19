@@ -1,6 +1,6 @@
 import SignOut from "components/Globals/SignOut";
 import CreatePageForm from "components/Pages/CreatePage/CreatePageForm";
-import { validateAuthentication } from "utils/AuthValidation";
+import { validateAuthentication } from "lib/auth/AuthValidation";
 
 const page = async () => {
   const isValid = await validateAuthentication("/createPage");

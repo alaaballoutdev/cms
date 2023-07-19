@@ -1,25 +1,17 @@
 "use client";
-import { Button, Typography, Form, Input } from "antd";
+import { Button, Form, Input } from "antd";
+import { Page } from "lib/Models/Types";
+import dynamic from "next/dynamic";
 import { useEffect } from "react";
-
-export type PageFormData = {
-  id?: string;
-  pagename: string;
-  url: string;
-  content?: string;
-  content_ar?: string;
-  created?: string;
-};
-
+const Paragraph = dynamic(() => import("antd/es/typography/Paragraph"));
 type Props = {
   buttonText: string;
-  onFinish: (values: PageFormData) => void;
+  onFinish: (values: Page) => void;
   failed: boolean;
-  page?: PageFormData;
+  page?: Page;
 
   loading: boolean;
 };
-const { Paragraph } = Typography;
 
 const PageForm = ({
   failed,

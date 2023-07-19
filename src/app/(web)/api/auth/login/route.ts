@@ -1,4 +1,6 @@
-import pocket from "lib/PocketBaseSingleton";
+import { Database } from "lib/Models/Database";
+import { NextResponse } from "next/server";
+import { InvalidCredentials } from "utils/TypicalApiResponses";
 
 type RequestBody = {
   identity: string;
@@ -8,12 +10,13 @@ type RequestBody = {
 export async function POST(request: Request) {
   const body: RequestBody = await request.json();
   try {
+    const pocket = Database.getConnection();
     const authData = await pocket.admins.authWithPassword(
       body.identity,
       body.password
     );
-    return new Response(JSON.stringify(authData));
+    return NextResponse.json(authData);
   } catch (error) {
-    return new Response("Invalid credentials", { status: 401 });
+    return InvalidCredentials();
   }
 }

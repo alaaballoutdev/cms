@@ -1,30 +1,26 @@
 import SignOut from "components/Globals/SignOut";
 import UsersTable from "components/Users/UsersTable/UsersTable";
-import pocket from "lib/PocketBaseSingleton";
-import { validateAuthentication } from "utils/AuthValidation";
+import { Database } from "lib/Models/Database";
+import { UserRecord, getTableEntry } from "lib/Models/Types";
+import { validateAuthentication } from "lib/auth/AuthValidation";
 export const revalidate = 0;
 
 export const metadata = {
   title: "Users | Post In",
 };
-
 const page = async () => {
   const isValid = await validateAuthentication("/users");
 
   if (!isValid) {
     return <SignOut />;
   }
+  const pocket = Database.getConnection();
   const usersRecords = await pocket
     .collection("users")
-    .getFullList({ fields: "username,created,email,id" });
+    .getFullList<UserRecord>({ fields: "username,created,email,id" });
 
   const users = usersRecords.map((user) => {
-    return {
-      username: user.username,
-      created: new Date(user.created).toLocaleString(),
-      key: user.id,
-      email: user.email,
-    };
+    return getTableEntry<UserRecord>(user);
   });
   return <UsersTable users={users} />;
 };

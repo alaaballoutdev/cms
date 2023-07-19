@@ -1,5 +1,5 @@
 "use client";
-import { Button, Space, Table, Typography } from "antd";
+import { Button, Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useRouter } from "next/navigation";
 import { renderPreview } from "./ItemsRenders";
@@ -13,13 +13,13 @@ import {
 import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { loadingPages, pageItems } from "lib/recoil-atoms";
-import DeletePageModal from "./DeletePageModal";
+import { Page } from "lib/Models/Types";
+import dynamic from "next/dynamic";
+const DeletePageModal = dynamic(() => import("./DeletePageModal"));
+const Paragraph = dynamic(() => import("antd/es/typography/Paragraph"));
 
-export interface PageEntryType {
+export interface PageEntry extends Page {
   key: string;
-  url: string;
-  pagename: string;
-  created: string;
 }
 
 const PagesTable = () => {
@@ -27,14 +27,15 @@ const PagesTable = () => {
   const [selectedPage, setSelectedPage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const tableLoading = useRecoilValue(loadingPages);
-  const pages = useRecoilValue(pageItems);
+  const pages = useRecoilValue<PageEntry[]>(pageItems);
   const router = useRouter();
-  const handleClick = (record: PageEntryType) => {
+
+  const handleClick = (record: PageEntry) => {
     setOpenModal(true);
     setSelectedPage(record.key);
   };
 
-  const renderActions = (_: any, record: PageEntryType) => (
+  const renderActions = (_: any, record: PageEntry) => (
     <Space size="middle">
       <Button onClick={() => router.push(`/editpage?url=${record.url}`)}>
         <EditOutlined />
@@ -44,8 +45,8 @@ const PagesTable = () => {
       </Button>
     </Space>
   );
-  /*ts-expect-error */
-  const columns: ColumnsType<PageEntryType> = [
+
+  const columns: ColumnsType<PageEntry> = [
     {
       title: (
         <>
@@ -110,7 +111,7 @@ const PagesTable = () => {
         setSelectedPage={setSelectedPage}
         setLoading={setLoading}
       >
-        <Typography.Paragraph>Are you sure?</Typography.Paragraph>
+        <Paragraph>Are you sure?</Paragraph>
       </DeletePageModal>
       <Table
         loading={tableLoading}

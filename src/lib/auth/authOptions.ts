@@ -1,5 +1,5 @@
 import { NextAuthOptions } from "next-auth";
-import pocket from "./PocketBaseSingleton";
+import { Database } from "lib/Models/Database";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const authOptions: NextAuthOptions = {
@@ -21,6 +21,7 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials, req) {
+        const pocket = Database.getConnection();
         try {
           const authData = await pocket.admins.authWithPassword(
             credentials?.username ?? "",

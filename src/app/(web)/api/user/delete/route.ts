@@ -1,33 +1,23 @@
-import pocket from "lib/PocketBaseSingleton";
-import { NextResponse } from "next/server";
-import { validateAuthentication } from "utils/AuthValidation";
+import { Database } from "lib/Models/Database";
+import { NextRequest } from "next/server";
+import { BadRequest, Success, Unauthorized } from "utils/TypicalApiResponses";
+import { validateAuthentication } from "lib/auth/AuthValidation";
 
-type RequestBody = {
-  id: string;
-};
-
-export async function POST(request: Request) {
-  const body: RequestBody = await request.json();
+export async function DELETE(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+  if (!id) {
+    return BadRequest();
+  }
   const isValid = await validateAuthentication();
   if (!isValid) {
-    return NextResponse.json(
-      {
-        message: "Unauthorized",
-      },
-      { status: 401 }
-    );
+    return Unauthorized();
   }
+  const pocket = Database.getConnection();
   try {
-    await pocket.collection("users").delete(body.id);
-    return NextResponse.json({
-      message: "Success",
-    });
+    await pocket.collection("users").delete(id);
+    return Success();
   } catch (error) {
-    return NextResponse.json(
-      {
-        message: "Bad Request",
-      },
-      { status: 400 }
-    );
+    return BadRequest();
   }
 }

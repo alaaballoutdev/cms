@@ -1,7 +1,6 @@
 import SignOut from "components/Globals/SignOut";
 import PagesTable from "components/Pages/PagesTable/PagesTable";
-import pocket from "lib/PocketBaseSingleton";
-import { validateAuthentication } from "utils/AuthValidation";
+import { validateAuthentication } from "lib/auth/AuthValidation";
 export const revalidate = 0;
 export const metadata = {
   title: "Pages | Post In",

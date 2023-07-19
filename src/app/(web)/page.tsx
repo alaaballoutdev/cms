@@ -1,6 +1,6 @@
 import SignOut from "components/Globals/SignOut";
-import { getSignIns, getSignUps, getUsers } from "utils/UsersStatistics";
-import { validateAuthentication } from "utils/AuthValidation";
+import { getSignIns, getSignUps, getUsers } from "lib/Services/UsersStatistics";
+import { validateAuthentication } from "lib/auth/AuthValidation";
 import StatisticCard from "components/Dashboard/StatisticCard";
 import UsersList from "components/Dashboard/UsersList";
 import {

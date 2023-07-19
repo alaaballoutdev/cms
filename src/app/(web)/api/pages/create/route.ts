@@ -1,9 +1,10 @@
-import { PageFormData } from "components/Pages/PageForm";
-import pocket from "lib/PocketBaseSingleton";
+import { Database } from "lib/Models/Database";
 import { NextResponse } from "next/server";
-import { validateAuthentication } from "utils/AuthValidation";
+import { BadRequest, Unauthorized } from "utils/TypicalApiResponses";
+import { validateAuthentication } from "lib/auth/AuthValidation";
+import { PageRecord } from "lib/Models/Types";
 
-type RequestBody = {
+type CreateRequestBody = {
   pagename: string;
   content: string;
   url: string;
@@ -13,29 +14,19 @@ type RequestBody = {
 export async function POST(request: Request) {
   const isValid = await validateAuthentication();
   if (!isValid) {
-    return NextResponse.json(
-      {
-        message: "Unauthorized",
-      },
-      { status: 401 }
-    );
+    return Unauthorized();
   }
-
-  const body: RequestBody = await request.json();
+  const body: CreateRequestBody = await request.json();
   const { pagename, content, url, content_ar } = body;
   const data = { pagename, content, url, content_ar };
+  const pocket = Database.getConnection();
   try {
-    const res: PageFormData = await pocket.collection("pages").create(data);
+    const res: PageRecord = await pocket.collection("pages").create(data);
     return NextResponse.json({
-      id: res.id as string,
-      created: res.created as string,
+      id: res.id,
+      created: res.created,
     });
   } catch (error) {
-    return NextResponse.json(
-      {
-        message: "Bad Request",
-      },
-      { status: 400 }
-    );
+    return BadRequest();
   }
 }

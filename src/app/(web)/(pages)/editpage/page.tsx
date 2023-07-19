@@ -1,8 +1,9 @@
 import SignOut from "components/Globals/SignOut";
 import EditPageForm from "components/Pages/EditPage/EditPageForm";
-import pocket from "lib/PocketBaseSingleton";
+import { Database } from "lib/Models/Database";
 import { notFound } from "next/navigation";
-import { validateAuthentication } from "utils/AuthValidation";
+import { validateAuthentication } from "lib/auth/AuthValidation";
+import { PageRecord } from "lib/Models/Types";
 export const revalidate = 0;
 export const metadata = {
   title: "Edit Page | Post In",
@@ -13,12 +14,11 @@ const page = async ({ searchParams }: { searchParams: { url: string } }) => {
     return <SignOut />;
   }
   try {
-    const pageRecord = await pocket
+    const pocket = Database.getConnection();
+    const page = await pocket
       .collection("pages")
-      .getFirstListItem(`url='${searchParams.url}'`);
+      .getFirstListItem<PageRecord>(`url='${searchParams.url}'`);
 
-    const { id, content, content_ar, pagename, url } = pageRecord;
-    const page = { id, content, content_ar, pagename, url };
     return <EditPageForm page={page} />;
   } catch (error) {
     return notFound();

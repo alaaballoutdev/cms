@@ -1,7 +1,8 @@
 import SignOut from "components/Globals/SignOut";
-import pocket from "lib/PocketBaseSingleton";
+import { Database } from "lib/Models/Database";
 import { notFound } from "next/navigation";
-import { validateAuthentication } from "utils/AuthValidation";
+import { validateAuthentication } from "lib/auth/AuthValidation";
+import { Page } from "lib/Models/Types";
 export const revalidate = 10;
 
 export async function generateMetadata({
@@ -9,9 +10,10 @@ export async function generateMetadata({
 }: {
   searchParams: { url: string };
 }) {
+  const pocket = Database.getConnection();
   const page = await pocket
     .collection("pages")
-    .getFirstListItem(`url='/${searchParams?.url}'`, {
+    .getFirstListItem<Page>(`url='/${searchParams?.url}'`, {
       fields: `pagename`,
     });
 
@@ -25,18 +27,18 @@ const page = async ({
   params,
 }: {
   searchParams?: { url: string };
-  params: { lang: "en" | "ar" };
+  params: { lang: string };
 }) => {
-  console.log(params);
   const isValid = await validateAuthentication("/test");
 
   if (!isValid) {
     return <SignOut />;
   }
+  const pocket = Database.getConnection();
   try {
     const page = await pocket
       .collection("pages")
-      .getFirstListItem(`url='/${searchParams?.url}'`, {
+      .getFirstListItem<Page>(`url='/${searchParams?.url}'`, {
         fields: `url,pagename,${
           params && params.lang === "ar" ? "content_ar" : "content"
         }, created`,
